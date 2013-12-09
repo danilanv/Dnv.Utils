@@ -7,9 +7,10 @@ using System.Windows.Data;
 namespace Dnv.Utils.Converters
 {
     /// <summary>
-    /// Если число элементов коллекции больше 0, то возвращает Visibility.Visible иначае Visibility.Collapsed
+    /// Converts System.Collections.ICollection to System.Windows.Visibility.
+    /// If ICollection.Count > 0, return Visibility.Visible else Visibility.Collapsed.
     /// </summary>
-    class CollectionItemsCountToVisibilityConverter: IValueConverter
+    public class CollectionItemsCountToVisibilityConverter: IValueConverter
     {
         public bool VisibleIfGtZero { get; set; }
 
@@ -20,6 +21,14 @@ namespace Dnv.Utils.Converters
 
         #region Implementation of IValueConverter
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var collection = value as ICollection;
@@ -28,7 +37,7 @@ namespace Dnv.Utils.Converters
 
             if (VisibleIfGtZero)
                 return collection.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            
+           
             return collection.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 

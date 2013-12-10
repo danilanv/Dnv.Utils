@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -46,7 +48,7 @@ namespace Dnv.Utils.TemplateSelectors
             Items = new List<DataTemplateItem>();
         }
 
-        public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
+        public override DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
         {
             var itemType = item.GetType();
 
@@ -57,13 +59,19 @@ namespace Dnv.Utils.TemplateSelectors
                     var frameworkElement = container as FrameworkElement;
                     if (frameworkElement != null)
                     {
-                        var kj = frameworkElement.FindResource(dataTemplateItem.DataTemplateName) as DataTemplate;
-                        return frameworkElement.FindResource(dataTemplateItem.DataTemplateName) as DataTemplate;
+                        var template =
+                            frameworkElement.FindResource(dataTemplateItem.DataTemplateName) as DataTemplate;
+                        if (template == null)
+                            throw new ArgumentNullException(
+                                "MutlipleInterfaceDataTemplateSelector: can't find template " +
+                                dataTemplateItem.DataTemplateName);
+
+                        return template;
                     }
                 }
             }
 
-            return base.SelectTemplate(item, container);
+            return null;
         }
 
         public List<DataTemplateItem> Items { get; set; }

@@ -11,9 +11,10 @@ namespace Dnv.Utils.Collections
     /// </summary>
     /// <typeparam name="TSourceItemType">Тип исходной коллекции.</typeparam>
     /// <typeparam name="TDestItemType">Тип коллекции, в которой нужно отобразить изменения исходной коллекции</typeparam>
-    public class ObservableCollectionsLinker<TSourceItemType, TDestItemType> where TDestItemType: class
+    public class ObservableCollectionsLinker<TSourceItemType, TDestItemType>: IDisposable
+        where TDestItemType: class
     {
-        ObservableCollection<TSourceItemType> _sourceCollection;
+        readonly ObservableCollection<TSourceItemType> _sourceCollection;
         readonly ObservableCollection<TDestItemType> _destCollection;
 
         readonly Func<TSourceItemType, TDestItemType> _constructDestItem;
@@ -33,7 +34,7 @@ namespace Dnv.Utils.Collections
 
             _constructDestItem = constructDestItem;
 
-            sourceCollection.CollectionChanged += SourceCollectionChanged;
+            _sourceCollection.CollectionChanged += SourceCollectionChanged;
         }
 
 
@@ -67,5 +68,14 @@ namespace Dnv.Utils.Collections
                     _destCollection.Add(destItem);
             }
         }
+
+        #region Implementation of IDisposable
+
+        public void Dispose()
+        {
+            _sourceCollection.CollectionChanged -= SourceCollectionChanged;
+        }
+
+        #endregion
     }
 }

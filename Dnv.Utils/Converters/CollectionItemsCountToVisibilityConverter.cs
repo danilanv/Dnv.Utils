@@ -9,6 +9,7 @@ namespace Dnv.Utils.Converters
     /// <summary>
     /// Converts System.Collections.ICollection to System.Windows.Visibility.
     /// If ICollection.Count > 0, return Visibility.Visible else Visibility.Collapsed.
+    /// Unfortunately does not works when items count changes.
     /// </summary>
     public class CollectionItemsCountToVisibilityConverter: IValueConverter
     {

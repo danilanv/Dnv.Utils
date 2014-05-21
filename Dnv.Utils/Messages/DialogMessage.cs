@@ -4,10 +4,35 @@ using System.Windows.Forms;
 namespace Dnv.Utils.Messages
 {
     /// <summary>
-    /// Сообщение, используется для отображения диалога. Вызывающая должна создать и сконфигурировать диалог.
-    /// Принимающая сторона должна отобразить диалог и вызвать DialogMessage.ProcessResult.
+    /// Message for using with MVVMLight. Allows view model to tell view to show the dialog and get dialog result.
+    /// Receving view should show dialog and call DialogMessage.ProcessResult.
     /// </summary>
-    /// <typeparam name="TDialog">Класс диалога. Должен иметь метод ShowDialog()</typeparam>
+    /// <typeparam name="TDialog">Type of dialog. Should have method ShowDialog()</typeparam>
+    /// <example>
+    /// <code> 
+    /// ViewModel:
+    ///  var msg = new DialogMessage<FolderBrowserDialog>(this,          
+    ///  new FolderBrowserDialog()          
+    ///  {          
+    ///      ShowNewFolderButton = false,          
+    ///      SelectedPath = LastPath          
+    ///  },          
+    ///  result =>          
+    ///  {  
+    ///      if (result.DialogResult == DialogResult.OK)  
+    ///         browseResult(result.Dialog.SelectedPath);  
+    ///  });  
+    ///  Messenger.Default.Send(msg, AppMessages.ShowSelectDialog);
+    /// 
+    /// View:
+    /// Messenger.Default.Register<DialogMessage<FolderBrowserDialog>>(this, AppMessages.ShowSelectDialog,
+    ///        (msg) =>
+    ///        {    
+    ///            msg.Result.DialogResult = msg.Dialog.ShowDialog();    
+    ///            msg.ProcessResult();    
+    ///        });    
+    /// </code>
+    /// </example>
     public class DialogMessage<TDialog> where TDialog: CommonDialog
     {
         /// <summary>
@@ -44,8 +69,8 @@ namespace Dnv.Utils.Messages
         public DialogMessage(object sender, TDialog dialog, Action<DialogMessageResult> resultCallback)
         {
             Sender = sender;
-            this.Dialog = dialog;
-            this._resultCallback = resultCallback;
+            Dialog = dialog;
+            _resultCallback = resultCallback;
             Result = new DialogMessageResult(Dialog);
         }
 

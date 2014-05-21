@@ -3,6 +3,8 @@
 namespace Dnv.Utils.Binding
 {
     /// <summary>
+    /// Author of this code is Thomas Levesque. (http://www.thomaslevesque.com/2011/03/21/wpf-how-to-bind-to-data-when-the-datacontext-is-not-inherited/)
+    /// Placed here because i use this code in my projects.
     /// Прокси объект, который позволяет биндится когда DataContext не унаследован. Использование:
     /// <BindingProxy x:Key="_bindingProxy" Data="{Binding Path=ViewModel, ElementName=_this}"/>
     /// ...

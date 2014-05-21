@@ -8,10 +8,47 @@ namespace Dnv.Utils.Settings
     public interface IApplicationSettingsBase
     {
         /// <summary>
-        /// Первый запуск приложения.
+        /// First application run.
         /// </summary>
         bool IsFirstInitialization { get; }
+
+        /// <summary>
+        /// Save settings.
+        /// </summary>
         void Save();
+    }
+
+    public class ApplicationSettingsBase
+    {
+        static private string _applicationDataPath = string.Empty;
+
+        /// <summary>
+        /// Директория для хранения локальных настроек приложения текущего пользователя. %LOCALAPPDATA%\<company>\<application>
+        /// Если директория не существует, то она будет создана.
+        /// </summary>
+        static public string LocalApplicationDataPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_applicationDataPath))
+                {
+                    var assembly = Assembly.GetEntryAssembly();
+                    var company = (AssemblyCompanyAttribute)Attribute.
+                        GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute));
+                    var product = (AssemblyProductAttribute)Attribute.
+                        GetCustomAttribute(assembly, typeof(AssemblyProductAttribute));
+
+                    _applicationDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+                                                        Environment.SpecialFolderOption.Create);
+                    _applicationDataPath = Path.Combine(_applicationDataPath, company.Company);
+                    _applicationDataPath = Path.Combine(_applicationDataPath, product.Product);
+                    if (!Directory.Exists(_applicationDataPath))
+                        Directory.CreateDirectory(_applicationDataPath);
+                }
+
+                return _applicationDataPath;
+            }
+        }
     }
 
     /// <summary>
@@ -19,11 +56,8 @@ namespace Dnv.Utils.Settings
     /// </summary>
     /// <typeparam name="TSettingsPdo">PDO класс используемый для сохранения настроек. 
     /// Должен содержать только свойства.</typeparam>
-    public class ApplicationSettingsBase<TSettingsPdo> : IApplicationSettingsBase where TSettingsPdo : class, new()
+    public class ApplicationSettingsBase<TSettingsPdo> :ApplicationSettingsBase,  IApplicationSettingsBase where TSettingsPdo : class, new()
     {
-// ReSharper disable StaticFieldInGenericType
-        static private string _applicationDataPath = string.Empty;
-// ReSharper restore StaticFieldInGenericType
         private readonly bool _isFirstInitialization = false;
 
         private readonly string _settingsFileName;
@@ -59,30 +93,6 @@ namespace Dnv.Utils.Settings
         protected string SettingsFullFilePath
         {
             get { return LocalApplicationDataPath + "\\" + _settingsFileName; }
-        }
-
-        static public string LocalApplicationDataPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_applicationDataPath))
-                {
-                    var assembly = Assembly.GetEntryAssembly();
-                    var company = (AssemblyCompanyAttribute)Attribute.
-                        GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute));
-                    var product = (AssemblyProductAttribute)Attribute.
-                        GetCustomAttribute(assembly, typeof (AssemblyProductAttribute));
-
-                    _applicationDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-                                                        Environment.SpecialFolderOption.Create);
-                    _applicationDataPath = Path.Combine(_applicationDataPath, company.Company);
-                    _applicationDataPath = Path.Combine(_applicationDataPath, product.Product);
-                    if (!Directory.Exists(_applicationDataPath))
-                        Directory.CreateDirectory(_applicationDataPath);
-                }
-
-                return _applicationDataPath;
-            }
         }
 
         public bool IsFirstInitialization

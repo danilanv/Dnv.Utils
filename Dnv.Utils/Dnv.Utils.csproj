@@ -53,9 +53,15 @@
     <Compile Include="Binding\BindingProxy.cs" />
     <Compile Include="Collections\ObservableCollectionsLinkerNr.cs" />
     <Compile Include="Collections\ObservableCollectionsLinker.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ColorToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\DictionaryConverter.cs" />
     <Compile Include="Converters\CollectionItemsCountToVisibilityConverter.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\SolidColorBrushToBooleanConverter.cs" />
+    <Compile Include="Converters\SolidColorBrushToColorConverter.cs" />
+    <Compile Include="Converters\VisibilityToBooleanConverter.cs" />
     <Compile Include="Messages\DialogMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ApplicationSettingsBase.cs" />

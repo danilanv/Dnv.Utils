@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace Dnv.Utils.Converters
 {
@@ -11,7 +12,7 @@ namespace Dnv.Utils.Converters
     /// If ICollection.Count > 0, return Visibility.Visible else Visibility.Collapsed.
     /// Unfortunately does not works when items count changes.
     /// </summary>
-    public class CollectionItemsCountToVisibilityConverter: IValueConverter
+    public class CollectionItemsCountToVisibilityConverter: MarkupExtension, IValueConverter
     {
         public bool VisibleIfGtZero { get; set; }
 
@@ -34,7 +35,7 @@ namespace Dnv.Utils.Converters
         {
             var collection = value as ICollection;
             if (collection == null)
-                throw new ArgumentException("CollectionItemsCountToVisibilityConverter: argument value must be of ICollection type.");
+                return Visibility.Collapsed;
 
             if (VisibleIfGtZero)
                 return collection.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -48,5 +49,10 @@ namespace Dnv.Utils.Converters
         }
 
         #endregion
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
     }
 }

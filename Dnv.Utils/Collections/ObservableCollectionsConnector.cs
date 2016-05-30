@@ -7,18 +7,18 @@ namespace Dnv.Utils.Collections
     /// <summary>
     /// Класс связывает две коллекции типа ObservableCollection между собой так, 
     /// что изменения (добавление и удаление элементов) в исходной коллекции автоматически отображаются на 
-    /// назначаемой коллекции. При этом колленции должны друг на друга строго по порядку следования.
-    /// Отслеживается только добавление и удаление. Перемещение не отслеживается.
+    /// назначаемой коллекции. Отслеживается только добавление и удаление. Перемещение не отслеживается.
     /// </summary>
     /// <typeparam name="TSourceItemType">Тип исходной коллекции.</typeparam>
     /// <typeparam name="TDestItemType">Тип коллекции, в которой нужно отобразить изменения исходной коллекции</typeparam>
-    public class ObservableCollectionsLinker<TSourceItemType, TDestItemType>: IDisposable
-        where TDestItemType: class
+    public class ObservableCollectionsConnector<TSourceItemType, TDestItemType>
+        where TDestItemType : class
     {
         readonly ObservableCollection<TSourceItemType> _sourceCollection;
         readonly ObservableCollection<TDestItemType> _destCollection;
 
         readonly Func<TSourceItemType, TDestItemType> _constructDestItem;
+        private readonly Func<TSourceItemType, TDestItemType> _getDestItem;
 
         /// <summary>
         /// Конструктор. После создания экземпляра изменения в коллекциях связываются автоматически.
@@ -27,13 +27,18 @@ namespace Dnv.Utils.Collections
         /// <param name="destCollection">Коллекция, в которой нужно отобразить изменения исходной.</param>
         /// <param name="constructDestItem">Функция, которая конструирует новый элемент типа DestItemType на 
         /// основе SourceItemType. Может возвращать null, тогда объект не будет добавляться.</param>
-        public ObservableCollectionsLinker(ObservableCollection<TSourceItemType> sourceCollection,
-            ObservableCollection<TDestItemType> destCollection, Func<TSourceItemType, TDestItemType> constructDestItem)
+        /// <param name="getDestItem">Фу-я должна возвращать объект из конечной коллекции, который соответствует 
+        /// объекту из исходной коллекции</param>
+        public ObservableCollectionsConnector(ObservableCollection<TSourceItemType> sourceCollection,
+            ObservableCollection<TDestItemType> destCollection, 
+            Func<TSourceItemType, TDestItemType> constructDestItem,
+            Func<TSourceItemType, TDestItemType> getDestItem)
         {
             _sourceCollection = sourceCollection;
             _destCollection = destCollection;
 
             _constructDestItem = constructDestItem;
+            _getDestItem = getDestItem;
 
             _sourceCollection.CollectionChanged += SourceCollectionChanged;
         }
@@ -48,15 +53,14 @@ namespace Dnv.Utils.Collections
             else if (e.Action == NotifyCollectionChangedAction.Reset)
                 _destCollection.Clear();
         }
-        
+
 
         private void ApplyRemoveChanges(NotifyCollectionChangedEventArgs e)
         {
-            // работоспособность проверена теоретически.
-            int index = e.OldStartingIndex;
             foreach (var sourceItem in e.OldItems)
             {
-                _destCollection.RemoveAt(index);
+                var destItem = _getDestItem((TSourceItemType)sourceItem);
+                var res = _destCollection.Remove(destItem);
             }
         }
 
@@ -69,14 +73,5 @@ namespace Dnv.Utils.Collections
                     _destCollection.Add(destItem);
             }
         }
-
-        #region Implementation of IDisposable
-
-        public void Dispose()
-        {
-            _sourceCollection.CollectionChanged -= SourceCollectionChanged;
-        }
-
-        #endregion
     }
 }

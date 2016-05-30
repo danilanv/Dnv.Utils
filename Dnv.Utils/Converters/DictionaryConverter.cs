@@ -10,20 +10,25 @@ namespace Dnv.Utils.Converters
     /// Объявления биндингов в MultiBinding должны идти в порядке: словарь, ключ.
     /// ConverterParameter может указывать на название свойства объекта, которое требуется возвратить из полученного значения Value .
     /// Пример:
-    /// class ViewModel{ public Dictionary<string, DateTime> Dict {get;} }
-    /// 
-    /// <DictionaryConverter x:Key="dictionaryConverter"/>
-    /// <object>
-    ///     <object.Property>  
-    ///         <MultiBinding Converter="{StaticResource dictionaryConverter}"
+    /// <para/>
+    /// <example>
+    /// <code>
+    /// class ViewModel{ public Dictionary&lt;string, DateTime&gt; Dict {get;} } 
+    /// <para/>
+    /// &lt;DictionaryConverter x:Key="dictionaryConverter"/&gt;
+    /// &lt;object&gt;
+    ///     &lt;object.Property&gt;  
+    ///         &lt;MultiBinding Converter="{StaticResource dictionaryConverter}"
     ///                       ConverterParameter="Millisecond"
-    ///                       UpdateSourceTrigger="PropertyChanged">
-    ///             <Binding Path="{Binding Path=Dict}"/>
-    ///             <Binding Path="Key"/>
-    ///         </MultiBinding>  
-    ///     </object.Property>    
-    /// </object>
-    /// </summary>
+    ///                       UpdateSourceTrigger="PropertyChanged"&gt;
+    ///             &lt;Binding Path="{Binding Path=Dict}"/&gt;
+    ///             &lt;Binding Path="Key"/&gt;
+    ///         &lt;/MultiBinding&gt;  
+    ///     &lt;/object.Property&gt;    
+    /// &lt;/object&gt;
+    /// </code>
+    /// </example>
+    /// </summary> 
     public class DictionaryConverter : IMultiValueConverter 
     {
         #region Implementation of IMultiValueConverter
@@ -32,7 +37,7 @@ namespace Dnv.Utils.Converters
         {
             if (values.Length != 2) 
                 throw new Exception("Parameters count must be 2!");
-
+            
             var dict = values[0] as IDictionary;
             var key = values[1];
             

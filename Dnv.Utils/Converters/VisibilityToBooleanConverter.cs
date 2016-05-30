@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace Dnv.Utils.Converters
 {
@@ -9,7 +10,7 @@ namespace Dnv.Utils.Converters
     /// Преобразователь Bool в Visibility.
     /// </summary>
     [ValueConversion(typeof(Visibility), typeof(bool))]
-    public class VisibilityToBooleanConverter : IValueConverter
+    public class VisibilityToBooleanConverter : MarkupExtension, IValueConverter
     {
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -23,6 +24,11 @@ namespace Dnv.Utils.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
         }
     }
 }

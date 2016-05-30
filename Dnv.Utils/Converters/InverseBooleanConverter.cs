@@ -1,10 +1,20 @@
 ﻿using System;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace Dnv.Utils.Converters
 {
+    /// <summary>
+    /// Преобразует true в false и наоборот. За счет расширения MarkupExtension можно использовать без создания отдельного экземпляра в ресурсах.
+    /// 
+    /// <example>
+    /// <code>
+    /// IsHitTestVisible="{Binding Path=IsOpen, Converter={namespace:InverseBooleanConverter}, ElementName=modifiersPopup}"
+    /// </code>
+    /// </example>
+    /// </summary>
     [ValueConversion(typeof(bool), typeof(bool))]
-    public class InverseBooleanConverter : IValueConverter
+    public class InverseBooleanConverter : MarkupExtension, IValueConverter
     {
         #region IValueConverter Members
 
@@ -24,5 +34,10 @@ namespace Dnv.Utils.Converters
         }
 
         #endregion
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
     }
 }

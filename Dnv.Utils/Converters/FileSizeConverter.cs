@@ -10,25 +10,26 @@ namespace Dnv.Utils.Converters
     [ValueConversion(typeof(long), typeof(string))]
     public class FileSizeConverter: IValueConverter
     {
-        private const int KbSize = 1024;
-        private const int MbSize = 1024*1024;
-        private const int GbSize = 1024 * 1024 * 1024;
+        private const double KbSize = 1024;
+        private const double MbSize = 1024 * 1024;
+        private const double GbSize = 1024 * 1024 * 1024;
+        private const int DigitsNumber = 1;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var size = (long)value;
+            var size = (double)(long)value;
             
             // размер меньше килобайта, отображаем байты
             if (size < KbSize)
-                return size.ToString(CultureInfo.InvariantCulture) + " б";
+                return Math.Round(size, DigitsNumber).ToString(CultureInfo.InvariantCulture) + " б";
             // размер меньше мегабайта, отображаем килобайты
             if (size >= KbSize && size <= MbSize)
-                return (size / KbSize).ToString(CultureInfo.InvariantCulture) + " Кб";
+                return Math.Round(size / KbSize, DigitsNumber).ToString(CultureInfo.InvariantCulture) + " Кб";
             // размер меньше гигабайта, отображаем мегабайты
             if (size <= GbSize)
-                return (size / (MbSize)).ToString(CultureInfo.InvariantCulture) + " Мб";
+                return Math.Round(size / MbSize, DigitsNumber).ToString(CultureInfo.InvariantCulture) + " Мб";
 
-            return (size /GbSize).ToString(CultureInfo.InvariantCulture) + " ГБ";
+            return Math.Round(size / GbSize, DigitsNumber).ToString(CultureInfo.InvariantCulture) + " ГБ";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
